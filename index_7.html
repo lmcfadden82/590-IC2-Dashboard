@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>590 Investment Committee</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── DESIGN TOKENS — William Blair inspired ─────────────────────── */
+:root {
+  /* Core palette */
+  --wb-navy:      #0D2B5E;
+  --wb-navy-mid:  #1A4080;
+  --wb-navy-lt:   #2A5298;
+  --wb-green:     #1E6B3C;
+  --wb-green-lt:  #2E8B57;
+  --wb-green-pale:#E8F4ED;
+  --wb-grey-dark: #3A3F4B;
+  --wb-grey-mid:  #6B7280;
+  --wb-grey-lt:   #9CA3AF;
+  --wb-grey-pale: #F3F4F6;
+  --wb-border:    #E5E7EB;
+  --wb-border-md: #D1D5DB;
+  --wb-white:     #FFFFFF;
+  --wb-off-white: #F9FAFB;
+
+  /* Semantic */
+  --bg:           var(--wb-white);
+  --bg-subtle:    var(--wb-off-white);
+  --bg-raised:    var(--wb-white);
+  --text-primary: var(--wb-grey-dark);
+  --text-secondary: var(--wb-grey-mid);
+  --text-muted:   var(--wb-grey-lt);
+  --accent:       var(--wb-navy);
+  --accent-lt:    var(--wb-navy-lt);
+  --success:      var(--wb-green);
+  --success-bg:   var(--wb-green-pale);
+  --danger:       #C0392B;
+  --danger-bg:    #FEF2F2;
+  --warning:      #B45309;
+  --warning-bg:   #FFFBEB;
+  --info:         var(--wb-navy-mid);
+  --info-bg:      #EFF6FF;
+
+  /* EPS calendar model colors */
+  --eps-m1:       #1B4F8A;
+  --eps-m1-bg:    #DBEAFE;
+  --eps-m2:       #1E6B3C;
+  --eps-m2-bg:    #D1FAE5;
+  --eps-m5:       #C25B00;
+  --eps-m5-bg:    #FEF3C7;
+  --eps-m6:       #6B3FA0;
+  --eps-m6-bg:    #EDE9FE;
+  --eps-multi:    #92400E;
+  --eps-multi-bg: #FDE68A;
+
+  /* Typography */
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
+
+  /* Spacing & shape */
+  --radius-sm:    4px;
+  --radius:       6px;
+  --radius-lg:    10px;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:       0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg:    0 8px 24px rgba(0,0,0,.10);
+}
+
+/* ── RESET ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--wb-grey-pale); }
+::-webkit-scrollbar-thumb { background: var(--wb-border-md); border-radius: 3px; }
+
+/* ── TOP HEADER ─────────────────────────────────────────────────── */
+.top-header {
+  background: var(--wb-navy);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: var(--shadow);
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: var(--wb-white);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 500; font-size: 11px;
+  color: var(--wb-navy);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,.95);
+  letter-spacing: 0.01em;
+}
+.header-subtitle {
+  font-size: 11px;
+  color: rgba(255,255,255,.55);
+  margin-top: 1px;
+}
+.header-right {
+  display: flex; align-items: center; gap: 20px;
+  font-size: 11px;
+  color: rgba(255,255,255,.6);
+  font-family: var(--font-mono);
+}
+.live-indicator {
+  display: flex; align-items: center; gap: 5px;
+  color: #6EE7B7;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  background: #6EE7B7;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── PRIMARY TABS ───────────────────────────────────────────────── */
+.primary-tabs-wrap {
+  background: var(--wb-navy);
+  border-bottom: 3px solid var(--wb-green);
+  overflow-x: auto;
+}
+.primary-tabs {
+  display: flex;
+  padding: 0 28px;
+  gap: 2px;
+  min-width: max-content;
+}
+.primary-tab {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,.55);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s, background .15s;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.primary-tab:hover:not(.active) {
+  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.06);
+}
+.primary-tab.active {
+  color: #fff;
+  border-bottom-color: #6EE7B7;
+  background: rgba(255,255,255,.08);
+}
+.primary-tab .tab-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: 5px;
+  vertical-align: middle;
+  letter-spacing: 0.05em;
+}
+.tab-badge.r { background: rgba(110,231,183,.2); color: #6EE7B7; }
+.tab-badge.t { background: rgba(251,191,36,.2); color: #FCD34D; }
+.tab-badge.eps { background: rgba(255,255,255,.15); color: rgba(255,255,255,.8); }
+
+/* ── PORTFOLIO PANEL ────────────────────────────────────────────── */
+.portfolio-panel { display: none; }
+.portfolio-panel.active { display: block; }
+
+/* ── SUB-TABS ───────────────────────────────────────────────────── */
+.sub-tabs-wrap {
+  background: var(--wb-white);
+  border-bottom: 1px solid var(--wb-border);
+  padding: 0 28px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+.sub-tab {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+}
+.sub-tab:hover:not(.active) { color: var(--wb-navy); }
+.sub-tab.active {
+  color: var(--wb-navy);
+  border-bottom-color: var(--wb-navy);
+  font-weight: 600;
+}
+
+/* ── SUB-PANEL ──────────────────────────────────────────────────── */
+.sub-panel { display: none; padding: 24px 28px; }
+.sub-panel.active { display: block; }
+
+/* ── PAGE HEADER ────────────────────────────────────────────────── */
+.page-hdr {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap; gap: 12px;
+}
+.page-hdr-left h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--wb-navy);
+  letter-spacing: -0.02em;
+}
+.page-hdr-left p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.page-hdr-meta {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  align-items: center;
+}
+.meta-pill {
+  background: var(--bg-subtle);
+  border: 1px solid var(--wb-border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+.meta-pill strong { color: var(--text-primary); }
+
+/* ── SECTION LABEL ──────────────────────────────────────────────── */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--wb-border);
+}
+
+/* ── CARDS ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.card-pad { padding: 18px 20px; }
+.card-hdr {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--wb-border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--wb-navy);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+/* ── ALERT BANNERS ──────────────────────────────────────────────── */
+.alert {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: flex; align-items: flex-start; gap: 8px;
+  border-left: 3px solid;
+}
+.alert-danger  { background: var(--danger-bg);  border-color: var(--danger);  color: #7F1D1D; }
+.alert-warning { background: var(--warning-bg); border-color: var(--warning); color: #78350F; }
+.alert-info    { background: var(--info-bg);    border-color: var(--info);    color: #1E3A5F; }
+.alert-success { background: var(--success-bg); border-color: var(--success); color: #14532D; }
+
+/* ── TABLES ─────────────────────────────────────────────────────── */
+.tbl-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius-lg);
+  background: var(--wb-white);
+  box-shadow: var(--shadow-sm);
+}
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th {
+  background: var(--wb-navy);
+  color: rgba(255,255,255,.85);
+  padding: 10px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+thead th:last-child { border-right: none; }
+thead th.right { text-align: right; }
+thead th.center { text-align: center; }
+tbody tr { border-bottom: 1px solid var(--wb-border); transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--wb-off-white); }
+tbody tr:nth-child(even) { background: var(--bg-subtle); }
+tbody tr:nth-child(even):hover { background: var(--wb-grey-pale); }
+td { padding: 9px 12px; color: var(--text-primary); vertical-align: top; }
+td.right { text-align: right; font-family: var(--font-mono); }
+td.center { text-align: center; }
+td.mono { font-family: var(--font-mono); }
+td.muted { color: var(--text-secondary); font-size: 11px; }
+td.sm { font-size: 11px; }
+
+/* ── TICKER BADGE ───────────────────────────────────────────────── */
+.ticker {
+  display: inline-block;
+  background: var(--wb-navy);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ── SECTOR TAG ─────────────────────────────────────────────────── */
+.sector-tag {
+  display: inline-block;
+  background: var(--wb-grey-pale);
+  border: 1px solid var(--wb-border-md);
+  color: var(--wb-grey-dark);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── SIGNAL BADGES ──────────────────────────────────────────────── */
+.sig {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.sig::before { content: '●'; font-size: 8px; }
+.sig-green  { background: var(--success-bg); color: var(--wb-green);  }
+.sig-yellow { background: var(--warning-bg); color: var(--warning);   }
+.sig-red    { background: var(--danger-bg);  color: var(--danger);    }
+
+/* ── DELTA ──────────────────────────────────────────────────────── */
+.delta-over  { color: var(--danger);  font-family: var(--font-mono); font-weight: 600; }
+.delta-under { color: var(--wb-green); font-family: var(--font-mono); font-weight: 600; }
+.delta-flat  { color: var(--text-muted); font-family: var(--font-mono); }
+
+/* ── ACTION FLAGS ───────────────────────────────────────────────── */
+.flag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.flag-over  { background: var(--danger-bg);  color: var(--danger);    border: 1px solid #FECACA; }
+.flag-under { background: var(--success-bg); color: var(--wb-green);  border: 1px solid #BBF7D0; }
+.flag-ontgt { background: var(--wb-grey-pale); color: var(--text-secondary); border: 1px solid var(--wb-border-md); }
+
+/* ── VOTE STATUS ────────────────────────────────────────────────── */
+.vote-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.vote-approved { background: var(--success-bg); color: var(--wb-green);  border: 1px solid #BBF7D0; }
+.vote-pending  { background: var(--warning-bg); color: var(--warning);   border: 1px solid #FDE68A; }
+
+/* ── PRIORITY ───────────────────────────────────────────────────── */
+.pri-high { background: var(--danger-bg);  color: var(--danger);    border: 1px solid #FECACA; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 600; }
+.pri-med  { background: var(--warning-bg); color: var(--warning);   border: 1px solid #FDE68A; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 600; }
+.pri-low  { background: var(--wb-grey-pale); color: var(--text-secondary); border: 1px solid var(--wb-border-md); padding: 2px 8px; border-radius: var(--radius-sm); font-size: 10px; font-weight: 600; }
+
+/* ── DROPDOWNS IN TABLE ─────────────────────────────────────────── */
+.tbl-select {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border-md);
+  border-radius: var(--radius-sm);
+  padding: 3px 24px 3px 8px;
+  font-size: 11px;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.tbl-select:focus { outline: none; border-color: var(--wb-navy); }
+
+/* ── SEARCH ─────────────────────────────────────────────────────── */
+.search-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.search-input {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border-md);
+  border-radius: var(--radius);
+  padding: 7px 12px 7px 32px;
+  font-size: 12px;
+  width: 260px;
+  outline: none;
+  color: var(--text-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-input:focus {
+  border-color: var(--wb-navy);
+  box-shadow: 0 0 0 3px rgba(13,43,94,.08);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.result-count { font-size: 11px; color: var(--text-muted); }
+
+/* ── EDITABLE CELLS ─────────────────────────────────────────────── */
+[contenteditable="true"] {
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 1px 3px;
+  transition: background .1s, box-shadow .1s;
+  cursor: text;
+}
+[contenteditable="true"]:hover { background: var(--info-bg); }
+[contenteditable="true"]:focus {
+  background: #EFF6FF;
+  box-shadow: 0 0 0 2px var(--wb-navy-lt);
+}
+.edit-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.edit-hint::before { content: '✎'; }
+
+/* ── JOURNAL SECTIONS ───────────────────────────────────────────── */
+.journal-meta-bar {
+  background: var(--wb-navy);
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  display: flex; gap: 28px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.jmeta { font-size: 11px; }
+.jmeta-label { color: rgba(255,255,255,.55); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 2px; }
+.jmeta-val { color: #fff; font-weight: 600; font-family: var(--font-mono); font-size: 12px; }
+
+.meeting-card {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid var(--wb-navy);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.meeting-card h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wb-navy);
+  margin-bottom: 4px;
+}
+.meeting-card .attendees {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.meeting-sublabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  margin-top: 10px;
+}
+.meeting-card ul { padding-left: 16px; }
+.meeting-card li { font-size: 12px; color: var(--text-secondary); margin-bottom: 3px; line-height: 1.5; }
+
+.agenda-card {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  margin-bottom: 6px;
+  display: flex; align-items: flex-start; gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.agenda-num {
+  background: var(--wb-navy);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.agenda-body strong { display: block; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+.agenda-body span { font-size: 11px; color: var(--text-secondary); }
+
+/* ── SECTOR BAR CHART ───────────────────────────────────────────── */
+.sector-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.sector-name { font-size: 11px; color: var(--text-secondary); width: 130px; flex-shrink: 0; font-weight: 500; }
+.sector-bar-bg { flex: 1; height: 7px; background: var(--wb-grey-pale); border-radius: 4px; overflow: hidden; }
+.sector-bar { height: 100%; border-radius: 4px; transition: width .4s ease; }
+.bar-ok      { background: var(--wb-navy-lt); }
+.bar-warning { background: var(--warning); }
+.bar-danger  { background: var(--danger); }
+.sector-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); width: 38px; text-align: right; flex-shrink: 0; }
+
+/* ── EPS CALENDAR ───────────────────────────────────────────────── */
+.cal-controls {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.cal-nav-btn {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border-md);
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: background .1s, border-color .1s;
+}
+.cal-nav-btn:hover { background: var(--wb-grey-pale); border-color: var(--wb-navy); }
+.cal-month-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--wb-navy);
+  min-width: 160px;
+  text-align: center;
+}
+.cal-legend {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-left: auto;
+}
+.cal-legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.cal-legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cal-grid {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--wb-white);
+}
+.cal-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--wb-navy);
+}
+.cal-day-hdr {
+  padding: 8px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.7);
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.cal-day-hdr:last-child { border-right: none; }
+
+.cal-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-cell {
+  min-height: 110px;
+  border-right: 1px solid var(--wb-border);
+  border-bottom: 1px solid var(--wb-border);
+  padding: 6px;
+  vertical-align: top;
+  position: relative;
+  transition: background .1s;
+}
+.cal-cell:hover { background: var(--wb-off-white); }
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.other-month { background: var(--wb-off-white); }
+.cal-cell.today { background: #EFF6FF; }
+.cal-cell.today .cal-date { background: var(--wb-navy); color: #fff; }
+.cal-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.cal-cell.other-month .cal-date { color: var(--text-muted); }
+
+.eps-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+}
+.eps-chip .chip-time {
+  font-size: 8px;
+  opacity: .7;
+  flex-shrink: 0;
+}
+.eps-chip .chip-unconf {
+  font-size: 8px;
+  opacity: .65;
+  font-style: italic;
+  flex-shrink: 0;
+}
+
+.eps-m1   { background: var(--eps-m1-bg);    color: var(--eps-m1);    border: 1px solid #BFDBFE; }
+.eps-m2   { background: var(--eps-m2-bg);    color: var(--eps-m2);    border: 1px solid #A7F3D0; }
+.eps-m5   { background: var(--eps-m5-bg);    color: var(--eps-m5);    border: 1px solid #FDE68A; }
+.eps-m6   { background: var(--eps-m6-bg);    color: var(--eps-m6);    border: 1px solid #DDD6FE; }
+.eps-multi{ background: var(--eps-multi-bg); color: var(--eps-multi);  border: 1px solid #FCD34D; }
+
+/* ── WATCHLIST EPS ──────────────────────────────────────────────── */
+.unannounced-wrap {
+  background: var(--warning-bg);
+  border: 1px solid #FDE68A;
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.unannounced-wrap h3 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warning);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.unannounced-item {
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 2px 0;
+  display: flex; gap: 8px;
+}
+
+/* ── CHECKLIST ──────────────────────────────────────────────────── */
+.checklist-wrap { max-width: 760px; }
+.checklist-phase {
+  background: var(--wb-white);
+  border: 1px solid var(--wb-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.phase-hdr {
+  background: var(--wb-navy);
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+}
+.phase-num {
+  background: rgba(255,255,255,.2);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.checklist-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--wb-border);
+  font-size: 12px;
+}
+.checklist-item:last-child { border-bottom: none; }
+.check-box {
+  width: 16px; height: 16px;
+  border: 2px solid var(--wb-border-md);
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  transition: background .1s, border-color .1s;
+  display: flex; align-items: center; justify-content: center;
+}
+.check-box.done { background: var(--wb-navy); border-color: var(--wb-navy); }
+.check-box.done::after { content: '✓'; color: #fff; font-size: 9px; font-weight: 700; }
+.checklist-item .ci-label { color: var(--text-primary); font-weight: 500; display: block; }
+.checklist-item .ci-sub { color: var(--text-secondary); font-size: 11px; display: block; margin-top: 1px; }
+.ci-tag {
+  display: inline-block;
+  background: var(--info-bg);
+  color: var(--wb-navy);
+  border: 1px solid #BFDBFE;
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media(max-width:700px) {
+  .sub-panel { padding: 14px 16px; }
+  .primary-tabs { padding: 0 12px; }
+  .sub-tabs-wrap { padding: 0 12px; }
+  .top-header { padding: 0 16px; }
+  .cal-cell { min-height: 70px; }
+  .page-hdr { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header class="top-header">
+  <div class="header-left">
+    <div class="logo-mark">590</div>
+    <div>
+      <div class="header-title">Investment Committee Dashboard</div>
+      <div class="header-subtitle">Private Wealth — Equity Strategies</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-indicator"><span class="live-dot"></span>Live</div>
+    <span>Updated: <span id="ts">—</span></span>
+  </div>
+</header>
+
+<!-- PRIMARY TABS -->
+<div class="primary-tabs-wrap">
+  <div class="primary-tabs" id="primary-tabs">
+    <button class="primary-tab active" onclick="switchModel('m1r',this)">Model 1 <span class="tab-badge r">R</span></button>
+    <button class="primary-tab" onclick="switchModel('m1t',this)">Model 1 <span class="tab-badge t">T</span></button>
+    <button class="primary-tab" onclick="switchModel('m2r',this)">Model 2 <span class="tab-badge r">R</span></button>
+    <button class="primary-tab" onclick="switchModel('m2t',this)">Model 2 <span class="tab-badge t">T</span></button>
+    <button class="primary-tab" onclick="switchModel('m5r',this)">Model 5 <span class="tab-badge r">R</span></button>
+    <button class="primary-tab" onclick="switchModel('m5t',this)">Model 5 <span class="tab-badge t">T</span></button>
+    <button class="primary-tab" onclick="switchModel('m6r',this)">Model 6 <span class="tab-badge r">R</span></button>
+    <button class="primary-tab" onclick="switchModel('m6t',this)">Model 6 <span class="tab-badge t">T</span></button>
+    <button class="primary-tab" onclick="switchModel('eps',this)">EPS Calendar <span class="tab-badge eps">All Models</span></button>
+  </div>
+</div>
+
+<!-- MODEL PANELS (generated by JS) -->
+<div id="panels-container"></div>
+
+<!-- EPS CALENDAR PANEL -->
+<div id="panel-eps" class="portfolio-panel">
+  <div class="sub-panel active" style="padding:24px 28px">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>EPS Calendar — All Models</h1>
+        <p>Earnings release dates across M1, M2, M5, M6 strategies. Refreshed on each page load from eps_data.csv.</p>
+      </div>
+    </div>
+    <div id="eps-unannounced"></div>
+    <div class="cal-controls">
+      <button class="cal-nav-btn" onclick="calNav(-1)">← Prev</button>
+      <div class="cal-month-label" id="cal-month-label">—</div>
+      <button class="cal-nav-btn" onclick="calNav(1)">Next →</button>
+      <div class="cal-legend" id="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--eps-m1)"></div>M1</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--eps-m2)"></div>M2</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--eps-m5)"></div>M5</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--eps-m6)"></div>M6</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--eps-multi)"></div>Multi-model</div>
+        <div class="cal-legend-item"><span style="font-style:italic;font-size:10px;color:var(--text-muted)">italic = unconfirmed</span></div>
+      </div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-header">
+        <div class="cal-day-hdr">Sun</div><div class="cal-day-hdr">Mon</div>
+        <div class="cal-day-hdr">Tue</div><div class="cal-day-hdr">Wed</div>
+        <div class="cal-day-hdr">Thu</div><div class="cal-day-hdr">Fri</div>
+        <div class="cal-day-hdr">Sat</div>
+      </div>
+      <div class="cal-body" id="cal-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST PANEL (accessible from any model via footer link) -->
+<div id="panel-checklist" class="portfolio-panel" style="padding:24px 28px">
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <h1>Dashboard Update Checklist</h1>
+      <p>Ongoing workflow for maintaining and sharing the 590 Investment Committee Dashboard</p>
+    </div>
+  </div>
+  <div class="checklist-wrap" id="checklist-body"></div>
+</div>
+
+<footer style="text-align:center;padding:16px 28px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--wb-border);background:var(--wb-white);margin-top:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+  <span>590 Investment Committee · For internal use only</span>
+  <button onclick="switchModel('checklist',document.getElementById('checklist-btn'))" id="checklist-btn"
+    style="background:var(--wb-navy);color:#fff;border:none;border-radius:var(--radius);padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;">
+    📋 Update Checklist
+  </button>
+</footer>
+
+<script>
+'use strict';
+// ════════════════════════════════════════════════════════════════
+// 590 IC DASHBOARD — DATA + RENDER ENGINE
+// ════════════════════════════════════════════════════════════════
+
+// ── MODEL REGISTRY ───────────────────────────────────────────────
+const MODELS = [
+  { id:'m1r', label:'Model 1R', badge:'R', strategy:'Aggressive All-Cap Growth', account:'Retirement', bench:'QQQ / S&P 500', csvFile:'m1r_data.csv', sectorLimit:30, nameLimit:8 },
+  { id:'m1t', label:'Model 1T', badge:'T', strategy:'Aggressive All-Cap Growth', account:'Taxable',    bench:'QQQ / S&P 500', csvFile:'m1t_data.csv', sectorLimit:30, nameLimit:8 },
+  { id:'m2r', label:'Model 2R', badge:'R', strategy:'M1 + Mutual Fund/ETF Overlay', account:'Retirement', bench:'S&P 500', csvFile:'m2r_data.csv', sectorLimit:30, nameLimit:8 },
+  { id:'m2t', label:'Model 2T', badge:'T', strategy:'M1 + Mutual Fund/ETF Overlay', account:'Taxable',    bench:'S&P 500', csvFile:'m2t_data.csv', sectorLimit:30, nameLimit:8 },
+  { id:'m5r', label:'Model 5R', badge:'R', strategy:'Mid/Large Cap GARP', account:'Retirement', bench:'S&P 500', csvFile:'m5r_data.csv', sectorLimit:25, nameLimit:6 },
+  { id:'m5t', label:'Model 5T', badge:'T', strategy:'Mid/Large Cap GARP', account:'Taxable',    bench:'S&P 500', csvFile:'m5t_data.csv', sectorLimit:25, nameLimit:6 },
+  { id:'m6r', label:'Model 6R', badge:'R', strategy:'Dividend Strategy', account:'Retirement', bench:'S&P 500', csvFile:'m6r_data.csv', sectorLimit:25, nameLimit:6 },
+  { id:'m6t', label:'Model 6T', badge:'T', strategy:'Dividend Strategy', account:'Taxable',    bench:'S&P 500', csvFile:'m6t_data.csv', sectorLimit:25, nameLimit:6 },
+];
+
+// ── CSV PARSER ───────────────────────────────────────────────────
+function parseCSV(text) {
+  const sections = {}; let current=null, headers=null;
+  // Normalize Windows line endings (\r\n -> \n) before splitting
+  (text||'').replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').forEach(rawLine => {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('//')) return;
+    // Section header: strip any trailing commas Excel may add e.g. "[HOLDINGS],,,,"
+    const secMatch = line.replace(/,+$/, '');
+    if (secMatch.startsWith('[') && secMatch.endsWith(']')) {
+      current = secMatch.slice(1,-1); sections[current]=[]; headers=null; return;
+    }
+    if (!current) return;
+    const cols=[]; let inQ=false, cell='';
+    for (let i=0;i<line.length;i++) {
+      const c=line[i];
+      if (c==='"'){inQ=!inQ;}
+      else if (c===','&&!inQ){cols.push(cell.trim());cell='';}
+      else{cell+=c;}
+    }
+    cols.push(cell.trim());
+    // Strip trailing empty columns that Excel adds when saving multi-column sheets
+    while(cols.length>0 && cols[cols.length-1]==='') cols.pop();
+    if (!cols.length) return;
+    if (!headers){
+      // Also strip empty header columns
+      headers=cols.filter(h=>h!=='');
+      return;
+    }
+    const obj={}; headers.forEach((h,i)=>{obj[h]=cols[i]||'';});
+    // Only push rows that have at least one non-empty value
+    if(Object.values(obj).some(v=>v!=='')) sections[current].push(obj);
+  });
+  return sections;
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+const pct = v => parseFloat(v)||0;
+const fmtPct = v => `${pct(v).toFixed(1)}%`;
+
+function perfColor(val) {
+  const n = parseFloat((val||'').replace('%',''));
+  if (n>0) return 'color:var(--wb-green);font-weight:600';
+  if (n<0) return 'color:var(--danger);font-weight:600';
+  return 'color:var(--text-secondary)';
+}
+
+const signalBadge = s => ({
+  GREEN:  '<span class="sig sig-green">On Track</span>',
+  YELLOW: '<span class="sig sig-yellow">Watch</span>',
+  RED:    '<span class="sig sig-red">Flag</span>',
+}[s]||'<span class="sig sig-yellow">Watch</span>');
+
+const priorityBadge = p => ({
+  HIGH: '<span class="pri-high">High</span>',
+  MED:  '<span class="pri-med">Med</span>',
+  LOW:  '<span class="pri-low">Low</span>',
+}[p]||'<span class="pri-low">Low</span>');
+
+const deltaCell = d => {
+  const sign=d>0?'+':'';
+  const cls=d>0.5?'delta-over':d<-0.5?'delta-under':'delta-flat';
+  return `<span class="${cls}">${sign}${d.toFixed(1)}%</span>`;
+};
+const deltaFlag = d => d>0.5
+  ? '<span class="flag flag-over">Overweight</span>'
+  : d<-0.5 ? '<span class="flag flag-under">Underweight</span>'
+  : '<span class="flag flag-ontgt">On Target</span>';
+
+// ── PANEL HTML GENERATOR ─────────────────────────────────────────
+function buildPanelHTML(m) {
+  return `
+<div id="panel-${m.id}" class="portfolio-panel${m.id==='m1r'?' active':''}">
+  <div class="sub-tabs-wrap">
+    <button class="sub-tab active" onclick="switchSub('${m.id}','journal',this)">Trading Journal</button>
+    <button class="sub-tab" onclick="switchSub('${m.id}','current',this)">Current Holdings</button>
+    <button class="sub-tab" onclick="switchSub('${m.id}','target',this)">Target Holdings</button>
+    <button class="sub-tab" onclick="switchSub('${m.id}','cvt',this)">Current vs Target</button>
+    <button class="sub-tab" onclick="switchSub('${m.id}','watchlist',this)">Watchlist</button>
+  </div>
+
+  <!-- TRADING JOURNAL -->
+  <div id="${m.id}-journal" class="sub-panel active">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>${m.label} — Trading Journal</h1>
+        <p>${m.strategy} · ${m.account} · Benchmark: ${m.bench}</p>
+      </div>
+      <div class="page-hdr-meta">
+        <div class="meta-pill">Last: <strong id="${m.id}-jmeta-last">—</strong></div>
+        <div class="meta-pill">Next: <strong id="${m.id}-jmeta-next">—</strong></div>
+        <div class="meta-pill">Quorum: <strong id="${m.id}-jmeta-quorum">—</strong></div>
+      </div>
+    </div>
+
+    <div class="section-label">Meeting Notes</div>
+    <div id="${m.id}-meeting-notes"></div>
+
+    <div class="section-label" style="margin-top:24px">Upcoming Agenda</div>
+    <div id="${m.id}-agenda"></div>
+
+    <div class="section-label" style="margin-top:24px">Add / Drop Voting Ledger</div>
+    <div class="edit-hint">Vote counts (For / Against / Abstain) and Notes are editable live — click to update. Action and Status use dropdowns.</div>
+    <div class="tbl-wrap">
+      <table id="${m.id}-votes-tbl">
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Action</th><th>Rationale</th>
+          <th class="center">For</th><th class="center">Against</th><th class="center">Abstain</th>
+          <th class="center">Status</th><th>Notes</th><th>Target Date</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CURRENT HOLDINGS -->
+  <div id="${m.id}-current" class="sub-panel">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>${m.label} — Current Holdings</h1>
+        <p><span id="${m.id}-count">—</span> positions · Rationale, Bull/Bear, Signal editable</p>
+      </div>
+    </div>
+    <div class="edit-hint">Rationale, Bull Case, Bear Case cells are editable — click to update in-browser.</div>
+    <div class="search-row">
+      <input class="search-input" type="text" placeholder="Search ticker, name, sector…"
+        oninput="filterTable('${m.id}-curr-tbl',this.value)"/>
+      <span class="result-count" id="${m.id}-curr-count"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table id="${m.id}-curr-tbl">
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Sector</th>
+          <th class="right">Weight %</th><th>Description</th>
+          <th>Rationale</th><th>Bull Case</th><th>Bear Case</th>
+          <th class="center">Signal</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TARGET HOLDINGS -->
+  <div id="${m.id}-target" class="sub-panel">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>${m.label} — Target Holdings</h1>
+        <p>Ideal portfolio composition and target weights</p>
+      </div>
+    </div>
+    <div class="search-row">
+      <input class="search-input" type="text" placeholder="Search ticker, name, sector…"
+        oninput="filterTable('${m.id}-tgt-tbl',this.value)"/>
+    </div>
+    <div class="tbl-wrap">
+      <table id="${m.id}-tgt-tbl">
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Sector</th>
+          <th class="right">Target Wt %</th><th>Description</th><th>Rationale</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CURRENT VS TARGET -->
+  <div id="${m.id}-cvt" class="sub-panel">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>${m.label} — Current vs Target</h1>
+        <p>Tolerance band ±0.5% — deltas outside tolerance flagged for rebalance</p>
+      </div>
+    </div>
+    <div class="search-row">
+      <input class="search-input" type="text" placeholder="Search ticker, name, sector…"
+        oninput="filterTable('${m.id}-cvt-tbl',this.value)"/>
+    </div>
+    <div class="tbl-wrap">
+      <table id="${m.id}-cvt-tbl">
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Sector</th>
+          <th class="right">Current %</th><th class="right">Target %</th>
+          <th class="right">Delta %</th><th class="center">Action Flag</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WATCHLIST -->
+  <div id="${m.id}-watchlist" class="sub-panel">
+    <div class="page-hdr">
+      <div class="page-hdr-left">
+        <h1>${m.label} — Watchlist</h1>
+        <p>Names under consideration — not yet in portfolio</p>
+      </div>
+    </div>
+    <div class="search-row">
+      <input class="search-input" type="text" placeholder="Search ticker, name, thesis…"
+        oninput="filterTable('${m.id}-wl-tbl',this.value)"/>
+    </div>
+    <div class="tbl-wrap">
+      <table id="${m.id}-wl-tbl">
+        <thead><tr>
+          <th>Ticker</th><th>Name</th><th>Sector</th>
+          <th>Thesis</th><th>Why Not Yet Owned</th><th class="center">Priority</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>`;
+}
+
+// ── RENDER FUNCTIONS ─────────────────────────────────────────────
+function renderJournalMeta(id, stats) {
+  const s={}; stats.forEach(r=>{s[r.field]=r.value;});
+  const set=(elId,v)=>{const e=document.getElementById(elId);if(e)e.textContent=v;};
+  set(`${id}-jmeta-last`, s.last_meeting||'TBD');
+  set(`${id}-jmeta-next`, s.next_meeting||'TBD');
+  set(`${id}-jmeta-quorum`, `${s.quorum||'—'} / ${s.committee_size||'—'}`);
+}
+
+function renderMeetingNotes(id, notes) {
+  const el=document.getElementById(`${id}-meeting-notes`); if(!el) return;
+  if(!notes||!notes.length){el.innerHTML='<p style="color:var(--text-muted);font-size:12px">No meeting notes yet — add rows to the MEETING_NOTES section in your CSV.</p>';return;}
+  el.innerHTML=notes.map(n=>{
+    const decisions=(n.decisions||'').split(';').filter(Boolean);
+    const actions=(n.action_items||'').split(';').filter(Boolean);
+    const attendees=(n.attendees||'').split(';').filter(Boolean).join(', ');
+    return `<div class="meeting-card">
+      <h4>Meeting — ${n.meeting_date||'TBD'}</h4>
+      <div class="attendees">Attendees: ${attendees||'—'}</div>
+      <div class="meeting-sublabel">Key Decisions</div>
+      <ul>${decisions.map(d=>`<li>${d.trim()}</li>`).join('')||'<li>—</li>'}</ul>
+      <div class="meeting-sublabel">Action Items</div>
+      <ul>${actions.map(a=>`<li>${a.trim()}</li>`).join('')||'<li>—</li>'}</ul>
+    </div>`;
+  }).join('');
+}
+
+function renderAgenda(id, items) {
+  const el=document.getElementById(`${id}-agenda`); if(!el) return;
+  if(!items||!items.length){el.innerHTML='<p style="color:var(--text-muted);font-size:12px">No agenda items yet — add rows to the AGENDA section in your CSV.</p>';return;}
+  el.innerHTML=items.map(a=>`
+    <div class="agenda-card">
+      <div class="agenda-num">${a.item_number||'?'}</div>
+      <div class="agenda-body">
+        <strong>${a.title||'—'}</strong>
+        <span>${a.description||''}</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderVotes(id, votes) {
+  const tbl=document.getElementById(`${id}-votes-tbl`); if(!tbl) return;
+  const actionOpts=['Buy','Sell','Add','Trim'].map(o=>`<option>${o}</option>`).join('');
+  const statusOpts=['Pending','Approved'].map(o=>`<option>${o}</option>`).join('');
+  tbl.querySelector('tbody').innerHTML=(votes||[]).map(v=>{
+    const aSel=`<select class="tbl-select" onchange="updateVoteField(this,'action')">${
+      ['Buy','Sell','Add','Trim'].map(o=>`<option${o.toLowerCase()===v.action.toLowerCase()?' selected':''}>${o}</option>`).join('')
+    }</select>`;
+    const saSel=`<select class="tbl-select" onchange="updateVoteField(this,'status')">${
+      ['Pending','Approved'].map(o=>`<option${o.toLowerCase()===v.status.toLowerCase()?' selected':''}>${o}</option>`).join('')
+    }</select>`;
+    return `<tr>
+      <td><span class="ticker">${v.ticker}</span></td>
+      <td class="sm">${v.name}</td>
+      <td>${aSel}</td>
+      <td class="muted">${v.rationale}</td>
+      <td class="center mono" contenteditable="true">${v.votes_for||0}</td>
+      <td class="center mono" contenteditable="true">${v.votes_against||0}</td>
+      <td class="center mono" contenteditable="true">${v.votes_abstain||0}</td>
+      <td class="center">${saSel}</td>
+      <td class="muted" contenteditable="true">${v.notes||''}</td>
+      <td class="mono muted">${v.target_date||'TBD'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCurrentHoldings(id, holdings) {
+  const tbl=document.getElementById(`${id}-curr-tbl`); if(!tbl) return;
+  tbl.querySelector('tbody').innerHTML=(holdings||[]).map(h=>`<tr>
+    <td><span class="ticker">${h.ticker}</span></td>
+    <td class="sm">${h.name}</td>
+    <td><span class="sector-tag">${h.sector}</span></td>
+    <td class="right mono">${fmtPct(h.current_weight)}</td>
+    <td class="muted">${h.description}</td>
+    <td class="muted" contenteditable="true">${h.rationale}</td>
+    <td class="muted" contenteditable="true">${h.bull_case}</td>
+    <td class="muted" contenteditable="true">${h.bear_case}</td>
+    <td class="center">${signalBadge(h.signal)}</td>
+  </tr>`).join('');
+  const cnt=document.getElementById(`${id}-count`);
+  if(cnt) cnt.textContent=`${(holdings||[]).length}`;
+}
+
+function renderTargetHoldings(id, holdings) {
+  const tbl=document.getElementById(`${id}-tgt-tbl`); if(!tbl) return;
+  tbl.querySelector('tbody').innerHTML=(holdings||[]).map(h=>`<tr>
+    <td><span class="ticker">${h.ticker}</span></td>
+    <td class="sm">${h.name}</td>
+    <td><span class="sector-tag">${h.sector}</span></td>
+    <td class="right mono">${fmtPct(h.target_weight)}</td>
+    <td class="muted">${h.description}</td>
+    <td class="muted" contenteditable="true">${h.rationale}</td>
+  </tr>`).join('');
+}
+
+function renderCvT(id, holdings) {
+  const tbl=document.getElementById(`${id}-cvt-tbl`); if(!tbl) return;
+  tbl.querySelector('tbody').innerHTML=(holdings||[]).map(h=>{
+    const cur=pct(h.current_weight), tg=pct(h.target_weight), d=cur-tg;
+    return `<tr>
+      <td><span class="ticker">${h.ticker}</span></td>
+      <td class="sm">${h.name}</td>
+      <td><span class="sector-tag">${h.sector}</span></td>
+      <td class="right mono">${fmtPct(h.current_weight)}</td>
+      <td class="right mono">${fmtPct(h.target_weight)}</td>
+      <td class="right">${deltaCell(d)}</td>
+      <td class="center">${deltaFlag(d)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderWatchlist(id, rows) {
+  const tbl=document.getElementById(`${id}-wl-tbl`); if(!tbl) return;
+  tbl.querySelector('tbody').innerHTML=(rows||[]).map(r=>`<tr>
+    <td><span class="ticker">${r.ticker}</span></td>
+    <td class="sm">${r.name}</td>
+    <td><span class="sector-tag">${r.sector}</span></td>
+    <td class="muted">${r.thesis}</td>
+    <td class="muted">${r.why_not_owned}</td>
+    <td class="center">${priorityBadge(r.priority)}</td>
+  </tr>`).join('');
+}
+
+// ── SEARCH / FILTER ──────────────────────────────────────────────
+function filterTable(tableId, query) {
+  const tbl=document.getElementById(tableId); if(!tbl) return;
+  const rows=tbl.querySelectorAll('tbody tr');
+  const q=query.toLowerCase().trim();
+  let vis=0;
+  rows.forEach(row=>{
+    const show=!q||row.textContent.toLowerCase().includes(q);
+    row.style.display=show?'':'none';
+    if(show) vis++;
+  });
+  const cid=tableId.replace('-tbl','-count');
+  const cel=document.getElementById(cid);
+  if(cel) cel.textContent=q?`${vis} result${vis!==1?'s':''}` :'';
+}
+
+// ── LOAD MODEL DATA ──────────────────────────────────────────────
+async function loadModel(m) {
+  try {
+    const resp = await fetch(m.csvFile);
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = parseCSV(await resp.text());
+    const id = m.id;
+    renderJournalMeta(id, data.PORTFOLIO_STATS||[]);
+    renderMeetingNotes(id, data.MEETING_NOTES||[]);
+    renderAgenda(id, data.AGENDA||[]);
+    renderVotes(id, data.VOTES||[]);
+    renderCurrentHoldings(id, data.HOLDINGS||[]);
+    renderTargetHoldings(id, data.HOLDINGS||[]);
+    renderCvT(id, data.HOLDINGS||[]);
+    renderWatchlist(id, data.WATCHLIST||[]);
+  } catch(err) {
+    // Non-blocking: log quietly and render a clean "not yet uploaded" placeholder
+    // so missing CSVs for other models don't break the tab that IS loaded.
+    console.info(`[590] ${m.csvFile} not loaded: ${err.message}`);
+    const subPanels=['journal','current','target','cvt','watchlist'];
+    subPanels.forEach(sub=>{
+      const panel=document.getElementById(`${m.id}-${sub}`);
+      if(!panel||panel.querySelector('.csv-placeholder')) return;
+      panel.insertAdjacentHTML('afterbegin',
+        `<div class="alert alert-info csv-placeholder" style="margin-bottom:20px">
+          <div>
+            <strong>${m.csvFile} not yet uploaded to GitHub.</strong><br>
+            Upload this CSV to your repo root alongside index.html, then refresh the page.
+            All other model tabs with uploaded CSVs will continue to work normally.
+          </div>
+        </div>`);
+    });
+  }
+}
+
+// ── EPS CALENDAR ─────────────────────────────────────────────────
+let calYear, calMonth, epsEvents=[];
+
+const EPS_COLORS = {
+  M1:'eps-m1', M2:'eps-m2', M5:'eps-m5', M6:'eps-m6', MULTI:'eps-multi'
+};
+
+function getEpsClass(models) {
+  const ms=(models||'').toUpperCase().split(/[,;]/).map(s=>s.trim()).filter(Boolean);
+  if(ms.length>1) return 'eps-multi';
+  const m=ms[0]||'';
+  if(m.startsWith('M1')) return 'eps-m1';
+  if(m.startsWith('M2')) return 'eps-m2';
+  if(m.startsWith('M5')) return 'eps-m5';
+  if(m.startsWith('M6')) return 'eps-m6';
+  return 'eps-multi';
+}
+
+function renderCalendar() {
+  const label=document.getElementById('cal-month-label');
+  const body=document.getElementById('cal-body');
+  if(!label||!body) return;
+  const monthNames=['January','February','March','April','May','June',
+    'July','August','September','October','November','December'];
+  label.textContent=`${monthNames[calMonth]} ${calYear}`;
+
+  const today=new Date();
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+
+  // Build event lookup by YYYY-MM-DD
+  const evByDate={};
+  epsEvents.forEach(ev=>{
+    const d=ev.earnings_date||'';
+    if(!d) return;
+    if(!evByDate[d]) evByDate[d]=[];
+    evByDate[d].push(ev);
+  });
+
+  const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
+  let html='';
+  for(let i=0;i<totalCells;i++){
+    let day,mo=calMonth,yr=calYear,otherMonth=false;
+    if(i<firstDay){
+      day=daysInPrev-firstDay+i+1; mo=calMonth-1;
+      if(mo<0){mo=11;yr=calYear-1;}
+      otherMonth=true;
+    } else if(i>=firstDay+daysInMonth){
+      day=i-firstDay-daysInMonth+1; mo=calMonth+1;
+      if(mo>11){mo=0;yr=calYear+1;}
+      otherMonth=true;
+    } else {
+      day=i-firstDay+1;
+    }
+    const isToday=!otherMonth&&day===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
+    const dateKey=`${yr}-${String(mo+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayEvents=evByDate[dateKey]||[];
+    const chipsHTML=dayEvents.map(ev=>{
+      const cls=getEpsClass(ev._model||ev.model||'');
+      const unconf=ev.confirmed==='No'?'<span class="chip-unconf">?</span>':'';
+      const time=ev.time?`<span class="chip-time">${ev.time}</span>`:'';
+      return `<div class="eps-chip ${cls}" title="${ev.name} (${ev._model||''}) — ${ev.time||''} — ${ev.confirmed==='No'?'Unconfirmed':'Confirmed'}">
+        ${ev.ticker} ${time}${unconf}
+      </div>`;
+    }).join('');
+    html+=`<div class="cal-cell${otherMonth?' other-month':''}${isToday?' today':''}">
+      <div class="cal-date">${day}</div>
+      ${chipsHTML}
+    </div>`;
+  }
+  body.innerHTML=html;
+}
+
+function calNav(dir) {
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCalendar();
+}
+
+async function loadEPS() {
+  try {
+    const resp=await fetch('eps_data.csv');
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data=parseCSV(await resp.text());
+
+    // Flatten all model sections, tagging each event with its model
+    epsEvents=[];
+    const modelSections=['M1_EARNINGS','M2_EARNINGS','M5_EARNINGS','M6_EARNINGS'];
+    const modelTag    =['M1','M2','M5','M6'];
+    modelSections.forEach((sec,i)=>{
+      (data[sec]||[]).forEach(ev=>{
+        epsEvents.push({...ev, _model:modelTag[i]});
+      });
+    });
+
+    // Render unannounced watchlist
+    const unann=data.UNANNOUNCED||[];
+    const uEl=document.getElementById('eps-unannounced');
+    if(uEl&&unann.length){
+      const meta={}; (data.META||[]).forEach(r=>{meta[r.field]=r.value;});
+      uEl.innerHTML=`<div class="unannounced-wrap">
+        <h3>⚠ Earnings Date Not Yet Announced — Monitor IR Websites</h3>
+        ${unann.map(u=>`<div class="unannounced-item">
+          <span class="ticker">${u.ticker}</span>
+          <span>${u.name}</span>
+          <span style="color:var(--text-muted);font-size:10px">${u.models}</span>
+        </div>`).join('')}
+      </div>`;
+    } else if(uEl) { uEl.innerHTML=''; }
+
+    renderCalendar();
+  } catch(err) {
+    console.warn('[590] EPS CSV load failed:', err.message);
+    const b=document.getElementById('cal-body');
+    if(b) b.innerHTML=`<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted);font-size:12px">
+      Could not load eps_data.csv — place it in the same folder as index.html and serve via GitHub Pages.
+    </div>`;
+  }
+}
+
+// ── TAB SWITCHING ────────────────────────────────────────────────
+function switchModel(id, btn) {
+  document.querySelectorAll('.portfolio-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.primary-tab').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById(`panel-${id}`);
+  if(panel) panel.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+function switchSub(modelId, subId, btn) {
+  const panel=document.getElementById(`panel-${modelId}`);
+  if(!panel) return;
+  panel.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
+  panel.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  const sub=document.getElementById(`${modelId}-${subId}`);
+  if(sub) sub.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── VOTE FIELD UPDATE (placeholder for future backend) ───────────
+function updateVoteField(sel, field) {
+  // Currently updates UI only. Future: POST to backend/Google Sheets here.
+  console.log(`Vote field "${field}" changed to: ${sel.value}`);
+}
+
+// ── CHECKLIST RENDER ─────────────────────────────────────────────
+function renderChecklist() {
+  const el=document.getElementById('checklist-body'); if(!el) return;
+  const phases=[
+    {
+      title:'Pre-Meeting Setup',
+      color:'var(--wb-navy)',
+      items:[
+        {label:'Open Excel workbook with FactSet formulas',sub:'One workbook per model (M1R, M1T, M2R, etc.) or all models in one multi-sheet workbook'},
+        {label:'Refresh FactSet data',sub:'Run FactSet refresh to pull latest prices, weights, and performance figures',tag:'FactSet'},
+        {label:'Update PORTFOLIO_STATS section',sub:'YTD/1yr/3yr performance for model and benchmark; cash %; max name weight'},
+        {label:'Update SECTOR_WEIGHTS section',sub:'Current sector allocations as plain numbers (e.g. 25.0 not 25.0%)'},
+        {label:'Update HOLDINGS section',sub:'Ticker, name, sector, current_weight, target_weight, signal (GREEN/YELLOW/RED). Use semicolons for multi-value fields.'},
+        {label:'Update VOTES section',sub:'Add new add/drop/trim candidates with action and rationale pre-populated for the meeting'},
+        {label:'Update MEETING_NOTES and AGENDA sections',sub:'Add next meeting date, attendees placeholder, agenda items'},
+        {label:'Save each Excel sheet as CSV',sub:'File → Save As → CSV for each model → overwrite m1r_data.csv, m1t_data.csv, etc.',tag:'Excel'},
+        {label:'Update eps_data.csv with new earnings dates',sub:'Check SEC EDGAR (8-K filings) and company IR websites for updated earnings dates',tag:'Manual'},
+        {label:'Upload all updated CSVs to GitHub',sub:'Go to GitHub repo → click each CSV file → pencil icon → paste new content → Commit. Or drag-and-drop via GitHub Desktop.',tag:'GitHub'},
+        {label:'Verify dashboard loads correctly',sub:'Open your GitHub Pages URL in browser, confirm all tabs show updated data'},
+        {label:'Share dashboard URL with committee',sub:'Send the GitHub Pages link — no download needed, works in any browser'},
+      ]
+    },
+    {
+      title:'Investment Committee Meeting',
+      color:'var(--wb-green)',
+      items:[
+        {label:'Open dashboard on shared screen or individual devices',sub:'Use the GitHub Pages URL — works on phone, tablet, laptop'},
+        {label:'Review Trading Journal → Meeting Notes for last meeting recap',sub:'Confirm action items from prior meeting were completed'},
+        {label:'Walk through Upcoming Agenda items',sub:'Use agenda card numbers as talking-point anchors'},
+        {label:'Navigate Current Holdings → flag any RED signals for discussion',sub:'Red signals = monitoring issues identified in CSV pre-meeting'},
+        {label:'Review Current vs Target for rebalancing candidates',sub:'Overweight/Underweight flags drive trim and add discussions'},
+        {label:'Use Voting Ledger live during meeting',sub:'Click For/Against/Abstain cells to update counts in real-time. Use Action and Status dropdowns. Add notes.'},
+        {label:'Review EPS Calendar for upcoming earnings',sub:'Confirm team is aware of any earnings in next 30 days across all models'},
+        {label:'Note all decisions and action items (pen/paper or notes app)',sub:'You will enter these into the CSV after the meeting'},
+      ]
+    },
+    {
+      title:'Post-Meeting Follow-Up',
+      color:'#92400E',
+      items:[
+        {label:'Open Excel workbook',sub:'Go to MEETING_NOTES section'},
+        {label:'Add new meeting note row',sub:'Fill meeting_date, attendees (semicolon-separated), decisions (semicolon-separated), action_items'},
+        {label:'Update VOTES section with final vote counts',sub:'Update votes_for, votes_against, votes_abstain, status (Pending → Approved where applicable)'},
+        {label:'Add any new AGENDA items for next meeting',sub:'Add item rows to AGENDA section in CSV'},
+        {label:'Update HOLDINGS if any trades were executed',sub:'Adjust current_weight values; update signal if thesis changed'},
+        {label:'Save as CSV → upload to GitHub',sub:'Same process as pre-meeting setup: Save As CSV → GitHub upload → commit',tag:'GitHub'},
+        {label:'Confirm dashboard reflects post-meeting state',sub:'Refresh the GitHub Pages URL and verify vote counts, meeting notes, and any holdings changes'},
+        {label:'Send updated dashboard link to committee',sub:'Reply-all to meeting thread with the GitHub Pages URL as single source of truth'},
+      ]
+    },
+    {
+      title:'Ongoing Mechanics Reference',
+      color:'var(--wb-grey-dark)',
+      items:[
+        {label:'Data flow: FactSet → Excel → CSV → GitHub → Dashboard',sub:'Every update follows this chain. The dashboard only reads CSV files — it never writes back.'},
+        {label:'File structure in GitHub repo',sub:'index.html · m1r_data.csv · m1t_data.csv · m2r_data.csv · m2t_data.csv · m5r_data.csv · m5t_data.csv · m6r_data.csv · m6t_data.csv · eps_data.csv'},
+        {label:'CSV format rules',sub:'Comma-separated; wrap any value containing a comma in double-quotes. Section headers in [BRACKETS]. Semicolons as list separators within a cell.'},
+        {label:'GitHub Pages publish time',sub:'Changes go live within ~60 seconds of committing to GitHub. Hard refresh (Ctrl+Shift+R) if you don\'t see updates.'},
+        {label:'EPS dates — authoritative sources only',sub:'Use SEC EDGAR 8-K filings and company IR websites. Do not rely on financial data aggregators for confirmed dates.'},
+        {label:'Signal discipline',sub:'GREEN = thesis intact. YELLOW = monitoring for change. RED = thesis at risk — flag for committee discussion at next meeting.'},
+      ]
+    },
+  ];
+
+  el.innerHTML=phases.map((ph,pi)=>`
+    <div class="checklist-phase">
+      <div class="phase-hdr" style="background:${ph.color}">
+        <div class="phase-num">${pi+1}</div>
+        ${ph.title}
+      </div>
+      ${ph.items.map((item,ii)=>`
+        <div class="checklist-item">
+          <div class="check-box" onclick="toggleCheck(this)" id="ck-${pi}-${ii}"></div>
+          <div>
+            <span class="ci-label">${item.label}${item.tag?`<span class="ci-tag">${item.tag}</span>`:''}</span>
+            <span class="ci-sub">${item.sub}</span>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleCheck(el) { el.classList.toggle('done'); }
+
+// ── BOOT ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Timestamp
+  document.getElementById('ts').textContent=new Date().toLocaleString('en-US',{
+    month:'short',day:'numeric',year:'numeric',
+    hour:'2-digit',minute:'2-digit',hour12:true
+  });
+
+  // Build all model panels
+  const container=document.getElementById('panels-container');
+  container.innerHTML=MODELS.map(m=>buildPanelHTML(m)).join('');
+
+  // Init calendar
+  const now=new Date();
+  calYear=now.getFullYear(); calMonth=now.getMonth();
+
+  // Load all data in parallel
+  Promise.all([
+    ...MODELS.map(m=>loadModel(m)),
+    loadEPS()
+  ]);
+
+  // Render checklist
+  renderChecklist();
+});
+</script>
+</body>
+</html>
